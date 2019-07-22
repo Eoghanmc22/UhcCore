@@ -66,7 +66,7 @@ public class PlayerDeathListener implements Listener {
 					event.getDrops().add(UhcItems.createRegenHead(player));
 				}
 
-				if(cfg.getEnableGoldenHeads()){
+				if(cfg.getEnableGoldenHeads() && !cfg.getRegenHeadDropOnPlayerDeath()){
 					event.getDrops().add(UhcItems.createGoldenHeadPlayerSkull(player.getName(), player.getUniqueId()));
 				}
 
