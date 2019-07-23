@@ -1,9 +1,10 @@
 package com.gmail.val59000mc.configuration;
 
-import com.gmail.val59000mc.UhcCore;
-import com.gmail.val59000mc.game.GameManager;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import net.milkbowl.vault.Vault;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -14,10 +15,11 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.gmail.val59000mc.UhcCore;
+import com.gmail.val59000mc.game.GameManager;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+
+import net.milkbowl.vault.Vault;
 
 public class MainConfiguration {
 	// Config options.
@@ -198,85 +200,80 @@ public class MainConfiguration {
 		restDuraton = UhcCore.getPlugin().getConfig().getInt("pre-generate-world.rest-duration",20);
 
 		// Scenarios
-		if (cfg.getBoolean("customize-game-behavior.enable-default-scenarios", false)){
+		if (cfg.getBoolean("customize-game-behavior.enable-default-scenarios", false))
 			GameManager.getGameManager().getScenarioManager().loadActiveScenarios(cfg.getStringList("customize-game-behavior.active-scenarios"));
-		}
 
 		// SOund on player death
-		String soundDeath = cfg.getString("customize-game-behavior.sound-on-player-death","false");
+		final String soundDeath = cfg.getString("customize-game-behavior.sound-on-player-death","false");
 		try{
 			soundOnPlayerDeath = Sound.valueOf(soundDeath);
-		}catch(IllegalArgumentException e){
+		}catch(final IllegalArgumentException e){
 			Bukkit.getLogger().info("[UhcCore] Invalid death sound: " + soundDeath);
 			soundOnPlayerDeath = null;
 		}
 
 		// Arena spot block
-		String spotBlock = cfg.getString("time-limit.deathmatch-teleport-spots-block","BEDROCK");
+		final String spotBlock = cfg.getString("time-limit.deathmatch-teleport-spots-block","BEDROCK");
 		try{
 			deathmatchTeleportSpotBLock = Material.valueOf(spotBlock);
-		}catch(IllegalArgumentException e){
+		}catch(final IllegalArgumentException e){
 			Bukkit.getLogger().info("[UhcCore] Invalid deathmatch teleport block: " + spotBlock);
 			deathmatchTeleportSpotBLock = Material.BEDROCK;
 		}
 
 		// Set remaining time
-		if(enableTimeLimit){
+		if(enableTimeLimit)
 			GameManager.getGameManager().setRemainingTime(timeLimit);
-		}else{
-			if(endWithDeathmatch){
-				Bukkit.getLogger().info("[UhcCore] end-with-deathmatch-after-time-limit is set to false because there is no time-limit.");
-				disableEndWithDeathmatch();
-			}
+		else if(endWithDeathmatch){
+			Bukkit.getLogger().info("[UhcCore] end-with-deathmatch-after-time-limit is set to false because there is no time-limit.");
+			disableEndWithDeathmatch();
 		}
 
 		// Potions effects on start
-		List<String> potionStrList = cfg.getStringList("potion-effect-on-start");
-		List<PotionEffect> potionList = new ArrayList<PotionEffect>();
-		if(potionStrList == null){
+		final List<String> potionStrList = cfg.getStringList("potion-effect-on-start");
+		final List<PotionEffect> potionList = new ArrayList<>();
+		if(potionStrList == null)
 			potionEffectOnStart = potionList;
-		}else{
-			for(String potionStr : potionStrList){
+		else{
+			for(final String potionStr : potionStrList)
 				try{
-					String[] potionArr = potionStr.split("/");
-					int duration = Integer.parseInt(potionArr[1]);
-					int amplifier = Integer.parseInt(potionArr[2]);
-					PotionEffect effect = new PotionEffect(PotionEffectType.getByName(potionArr[0].toUpperCase()),duration,amplifier);
+					final String[] potionArr = potionStr.split("/");
+					final int duration = Integer.parseInt(potionArr[1]);
+					final int amplifier = Integer.parseInt(potionArr[2]);
+					final PotionEffect effect = new PotionEffect(PotionEffectType.getByName(potionArr[0].toUpperCase()),duration,amplifier);
 					potionList.add(effect);
-				}catch(Exception e){
+				}catch(final Exception e){
 					Bukkit.getLogger().warning("[UhcCore] "+potionStr+" ignored, please check the syntax. It must be formated like POTION_NAME/duration/amplifier");
 				}
-			}
 			potionEffectOnStart = potionList;
 		}
 
 		// Mobs gold drops
-		List<String> mobsGoldDrop = cfg.getStringList("customize-game-behavior.add-gold-drops.affected-mobs");
-		List<EntityType> mobsType = new ArrayList<EntityType>();
+		final List<String> mobsGoldDrop = cfg.getStringList("customize-game-behavior.add-gold-drops.affected-mobs");
+		final List<EntityType> mobsType = new ArrayList<>();
 		if(mobsGoldDrop != null){
-			for(String mobTypeString : mobsGoldDrop){
+			for(final String mobTypeString : mobsGoldDrop)
 				try{
-					EntityType mobType = EntityType.valueOf(mobTypeString);
+					final EntityType mobType = EntityType.valueOf(mobTypeString);
 					mobsType.add(mobType);
-				}catch(IllegalArgumentException e){
+				}catch(final IllegalArgumentException e){
 					Bukkit.getLogger().warning("[UhcCore] " + mobTypeString+" is not a valid mob type");
 				}
-			}
 
 			affectedGoldDropsMobs = mobsType;
 		}
 
 		// Seed list
-		List<Long> choosenSeed = cfg.getLongList("world-seeds.list");
+		final List<Long> choosenSeed = cfg.getLongList("world-seeds.list");
 		if(choosenSeed == null)
-			seeds = new ArrayList<Long>();
+			seeds = new ArrayList<>();
 		else
 			seeds = choosenSeed;
 
 
 		// World list
-		List<String> worldList = cfg.getStringList("world-list.list");
-		worldsList = (worldList == null) ? new ArrayList<String>() : worldList;
+		final List<String> worldList = cfg.getStringList("world-list.list");
+		worldsList = (worldList == null) ? new ArrayList<>() : worldList;
 
 
 		// Fast Mode
@@ -294,45 +291,39 @@ public class MainConfiguration {
 
 		// Fast Mode, generate-vein
 		enableGenerateVein = cfg.getBoolean("fast-mode.generate-vein.enable",false);
-		generateVeins = new HashMap<Material,GenerateVeinConfiguration>();
-		ConfigurationSection allVeinsSection = cfg.getConfigurationSection("fast-mode.generate-vein.veins");
-		if(allVeinsSection != null){
-			for(String veinSectionName : allVeinsSection.getKeys(false)){
-				ConfigurationSection veinSection = allVeinsSection.getConfigurationSection(veinSectionName);
-				GenerateVeinConfiguration veinConfig = new GenerateVeinConfiguration();
-				if(veinConfig.parseConfiguration(veinSection)){
+		generateVeins = new HashMap<>();
+		final ConfigurationSection allVeinsSection = cfg.getConfigurationSection("fast-mode.generate-vein.veins");
+		if(allVeinsSection != null)
+			for(final String veinSectionName : allVeinsSection.getKeys(false)){
+				final ConfigurationSection veinSection = allVeinsSection.getConfigurationSection(veinSectionName);
+				final GenerateVeinConfiguration veinConfig = new GenerateVeinConfiguration();
+				if(veinConfig.parseConfiguration(veinSection))
 					generateVeins.put(veinConfig.getMaterial(),veinConfig);
-				}
 			}
-		}
 
 		// Fast Mode, block-loot
 		enableBlockLoots = cfg.getBoolean("fast-mode.block-loot.enable",false);
-		blockLoots = new HashMap<Material,BlockLootConfiguration>();
-		ConfigurationSection allBlockLootsSection = cfg.getConfigurationSection("fast-mode.block-loot.loots");
-		if(allBlockLootsSection != null){
-			for(String blockLootSectionName : allBlockLootsSection.getKeys(false)){
-				ConfigurationSection blockLootSection = allBlockLootsSection.getConfigurationSection(blockLootSectionName);
-				BlockLootConfiguration blockLootConfig = new BlockLootConfiguration();
-				if(blockLootConfig.parseConfiguration(blockLootSection)){
+		blockLoots = new HashMap<>();
+		final ConfigurationSection allBlockLootsSection = cfg.getConfigurationSection("fast-mode.block-loot.loots");
+		if(allBlockLootsSection != null)
+			for(final String blockLootSectionName : allBlockLootsSection.getKeys(false)){
+				final ConfigurationSection blockLootSection = allBlockLootsSection.getConfigurationSection(blockLootSectionName);
+				final BlockLootConfiguration blockLootConfig = new BlockLootConfiguration();
+				if(blockLootConfig.parseConfiguration(blockLootSection))
 					blockLoots.put(blockLootConfig.getMaterial(),blockLootConfig);
-				}
 			}
-		}
 
 		// Fast Mode, mob-loot
 		enableMobLoots = cfg.getBoolean("fast-mode.mob-loot.enable",false);
-		mobLoots = new HashMap<EntityType,MobLootConfiguration>();
-		ConfigurationSection allMobLootsSection = cfg.getConfigurationSection("fast-mode.mob-loot.loots");
-		if(allMobLootsSection != null){
-			for(String mobLootSectionName : allMobLootsSection.getKeys(false)){
-				ConfigurationSection mobLootSection = allMobLootsSection.getConfigurationSection(mobLootSectionName);
-				MobLootConfiguration mobLootConfig = new MobLootConfiguration();
-				if(mobLootConfig.parseConfiguration(mobLootSection)){
+		mobLoots = new HashMap<>();
+		final ConfigurationSection allMobLootsSection = cfg.getConfigurationSection("fast-mode.mob-loot.loots");
+		if(allMobLootsSection != null)
+			for(final String mobLootSectionName : allMobLootsSection.getKeys(false)){
+				final ConfigurationSection mobLootSection = allMobLootsSection.getConfigurationSection(mobLootSectionName);
+				final MobLootConfiguration mobLootConfig = new MobLootConfiguration();
+				if(mobLootConfig.parseConfiguration(mobLootSection))
 					mobLoots.put(mobLootConfig.getEntityType(),mobLootConfig);
-				}
 			}
-		}
 
 
 		// custom events
@@ -352,7 +343,7 @@ public class MainConfiguration {
 
 
 	private void loadWorldEdit() {
-		Plugin wePlugin = Bukkit.getPluginManager().getPlugin("WorldEdit");
+		final Plugin wePlugin = Bukkit.getPluginManager().getPlugin("WorldEdit");
 		if(wePlugin == null || !(wePlugin instanceof WorldEditPlugin)) {
 			Bukkit.getLogger().warning("[UhcCore] WorldEdit plugin not found, there will be no support of schematics.");
 			worldEditLoaded = false;
@@ -363,7 +354,7 @@ public class MainConfiguration {
 	}
 
 	private void loadVault(){
-		Plugin vault = Bukkit.getPluginManager().getPlugin("Vault");
+		final Plugin vault = Bukkit.getPluginManager().getPlugin("Vault");
 		if(vault == null || !(vault instanceof Vault)) {
 			Bukkit.getLogger().warning("[UhcCore] Vault plugin not found, there will be no support of economy rewards.");
 			vaultLoaded = false;
@@ -520,8 +511,8 @@ public class MainConfiguration {
 	}
 
 	public boolean getReplaceOceanBiomes(){
-	    return replaceOceanBiomes;
-    }
+		return replaceOceanBiomes;
+	}
 
 	public Map<Material, GenerateVeinConfiguration> getMoreOres() {
 		return generateVeins;

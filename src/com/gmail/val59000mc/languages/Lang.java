@@ -1,16 +1,17 @@
 package com.gmail.val59000mc.languages;
 
-import com.gmail.val59000mc.scenarios.Scenario;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import com.gmail.val59000mc.scenarios.Scenario;
 
 public class Lang {
 
@@ -25,8 +26,8 @@ public class Lang {
 	public static String GAME_START_DEATHMATCH;
 	public static String GAME_BORDER_START_SHRINKING;
 
-    public static String PLAYERS_NETHER_OFF;
-    public static String PLAYERS_BUILD_HEIGHT;
+	public static String PLAYERS_NETHER_OFF;
+	public static String PLAYERS_BUILD_HEIGHT;
 	public static String PLAYERS_WELCOME_NEW;
 	public static String PLAYERS_WELCOME_BACK_IN_GAME;
 	public static String PLAYERS_WELCOME_BACK_SPECTATING;
@@ -139,24 +140,24 @@ public class Lang {
 	public static String SCENARIO_RODLESS_ERROR;
 	public static String SCENARIO_SWITCHEROO_SWITCH;
 	public static String SCENARIO_LOVEATFIRSTSIGHT_JOIN_ERROR;
+	public static String ITEMS_REGEN_HEAD2;
 
 	public Lang(){
 		loadLangConfig();
 	}
 
 	private void loadLangConfig() {
-		File langFile = new File("plugins/UhcCore/lang.yml");
-		if(!langFile.exists()) {
+		final File langFile = new File("plugins/UhcCore/lang.yml");
+		if(!langFile.exists())
 			try {
 				langFile.createNewFile();
-			}catch (IOException ex){
+			}catch (final IOException ex){
 				Bukkit.getLogger().severe("[UhcCore] Failed to create " + langFile.toString());
 				ex.printStackTrace();
 				return;
 			}
-		}
 
-		FileConfiguration lang = YamlConfiguration.loadConfiguration(langFile);
+		final FileConfiguration lang = YamlConfiguration.loadConfiguration(langFile);
 
 		// Game
 		GAME_ENOUGH_TEAMS_READY = getString(lang, "game.enough-teams-ready", "Ok, enough teams are ready.");
@@ -171,8 +172,8 @@ public class Lang {
 		GAME_BORDER_START_SHRINKING = getString(lang, "game.border-start-shrinking", "The border will now begin to shrink");
 
 		// Players
-        PLAYERS_NETHER_OFF = getString(lang, "players.nether-off", "The nether has been deactivated for this game.");
-        PLAYERS_BUILD_HEIGHT = getString(lang, "players.build-height", "&cMax build height reached!");
+		PLAYERS_NETHER_OFF = getString(lang, "players.nether-off", "The nether has been deactivated for this game.");
+		PLAYERS_BUILD_HEIGHT = getString(lang, "players.build-height", "&cMax build height reached!");
 		PLAYERS_WELCOME_NEW = getString(lang, "players.welcome-new", "Welcome to UHC, please select your team");
 		PLAYERS_WELCOME_BACK_IN_GAME = getString(lang, "players.welcome-back-in-game", "You logged back in the game");
 		PLAYERS_WELCOME_BACK_SPECTATING = getString(lang, "players.welcome-back-spectating", "You are dead and are now spectating.");
@@ -245,6 +246,7 @@ public class Lang {
 		ITEMS_BUNGEE = getString(lang, "items.bungee", "&6Right click to go back to the Hub");
 		ITEMS_BARRIER = getString(lang, "items.barrier", "Leave your team");
 		ITEMS_REGEN_HEAD = getString(lang, "items.regen-head", "Right click to regen your team for 5 seconds");
+		ITEMS_REGEN_HEAD2 = getString(lang, "items.regen-head", "Or Combine the head with gold to get a golden head");
 		ITEMS_REGEN_HEAD_ACTION = getString(lang, "items.regen-head-action", "You get a 5 seconds regen effect for eating a player head");
 		ITEMS_GOLDEN_HEAD_SKULL_NAME = getString(lang, "items.golden-head.skull-name", "&6%player%'s head");
 		ITEMS_GOLDEN_HEAD_SKULL_HELP = getString(lang, "items.golden-head.skull-help", "&eCombine the head with gold to get a golden head.");
@@ -282,7 +284,7 @@ public class Lang {
 		SCENARIO_GLOBAL_ITEM_BACK = getString(lang, "scenarios.global.item-back", "&6Back");
 
 		// load scenario info
-		for (Scenario scenario : Scenario.values()){
+		for (final Scenario scenario : Scenario.values()){
 			List<String> info = lang.getStringList("scenarios." + scenario.getLowerCase() + ".info");
 
 			if (info.isEmpty()){
@@ -290,11 +292,10 @@ public class Lang {
 				info = Arrays.asList(scenario.getInfo());
 			}
 
-			List<String> translatedInfo = new ArrayList<>();
+			final List<String> translatedInfo = new ArrayList<>();
 
-			for (String message : info){
+			for (final String message : info)
 				translatedInfo.add(ChatColor.translateAlternateColorCodes('&', message));
-			}
 
 			scenario.setInfo(translatedInfo.toArray(new String[]{}));
 		}
@@ -313,7 +314,7 @@ public class Lang {
 
 		try {
 			lang.save(langFile);
-		}catch (IOException ex){
+		}catch (final IOException ex){
 			Bukkit.getLogger().severe("[UhcCore] Failed to edit " + langFile.toString());
 			ex.printStackTrace();
 		}
