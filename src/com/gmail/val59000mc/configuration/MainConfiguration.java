@@ -57,6 +57,9 @@ public class MainConfiguration {
 	private int goldDropPercentage;
 	private boolean enableEpisodeMarkers;
 	private long episodeMarkersDelay;
+	private boolean enableScenarioVoting;
+	private int maxScenarioVotes;
+	private int electedScenaroCount;
 	private boolean enableExpDropOnDeath;
 	private int expDropOnDeath;
 	private boolean enableKillDisconnectedPlayers;
@@ -69,7 +72,7 @@ public class MainConfiguration {
 	private long timeToShrink;
 	private long timeLimit;
 	private boolean enableTimeLimit;
-	public int maxBuildingHeight;
+	private int maxBuildingHeight;
 	private boolean banNether;
 	private boolean enableTheEnd;
 	private boolean banLevelTwoPotions;
@@ -162,6 +165,9 @@ public class MainConfiguration {
 		goldDropPercentage = cfg.getInt("customize-game-behavior.add-gold-drops.drop-chance-percentage",0);
 		enableEpisodeMarkers = cfg.getBoolean("episode-markers.enable",false);
 		episodeMarkersDelay = cfg.getLong("episode-markers.delay",900);
+		enableScenarioVoting = cfg.getBoolean("customize-game-behavior.scenarios.voting.enable", false);
+		maxScenarioVotes = cfg.getInt("customize-game-behavior.scenarios.voting.max-votes", 3);
+		electedScenaroCount = cfg.getInt("customize-game-behavior.scenarios.voting.elected-scenarios", 3);
 		enableExpDropOnDeath = cfg.getBoolean("customize-game-behavior.add-xp-drops-on-player-death.enable",false);
 		expDropOnDeath = cfg.getInt("customize-game-behavior.add-xp-drops-on-player-death.quantity",0);
 		enableKillDisconnectedPlayers = cfg.getBoolean("kill-disconnected-players-after-delay.enable",false);
@@ -668,6 +674,18 @@ public class MainConfiguration {
 
 	public long getEpisodeMarkersDelay() {
 		return episodeMarkersDelay;
+	}
+
+	public boolean getEnableScenarioVoting() {
+		return enableScenarioVoting;
+	}
+
+	public int getMaxScenarioVotes() {
+		return maxScenarioVotes;
+	}
+
+	public int getElectedScenaroCount() {
+		return electedScenaroCount;
 	}
 
 	public boolean getEnableExpDropOnDeath() {

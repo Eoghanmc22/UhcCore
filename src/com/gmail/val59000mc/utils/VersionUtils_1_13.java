@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.RenderType;
 import org.bukkit.scoreboard.Scoreboard;
 
 import com.gmail.val59000mc.UhcCore;
@@ -35,11 +36,13 @@ public class VersionUtils_1_13 extends VersionUtils{
 		item.setItemMeta(im);
 		return item;
 	}
-
-	@Override
-	public Objective registerObjective(Scoreboard scoreboard, String name, String criteria) {
-		return scoreboard.registerNewObjective(name, criteria, name);
-	}
+    @Override
+    public Objective registerObjective(Scoreboard scoreboard, String name, String criteria) {
+        if (criteria.equals("health")){
+            return scoreboard.registerNewObjective(name, criteria, name, RenderType.HEARTS);
+        }
+        return scoreboard.registerNewObjective(name, criteria, name);
+    }
 
 	@Override
 	public void setPlayerMaxHealth(Player player, double maxHealth) {

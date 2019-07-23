@@ -1,10 +1,9 @@
 package com.gmail.val59000mc.scenarios;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.gmail.val59000mc.UhcCore;
+import com.gmail.val59000mc.game.GameManager;
+import com.gmail.val59000mc.languages.Lang;
+import com.gmail.val59000mc.players.UhcPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -12,9 +11,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import com.gmail.val59000mc.UhcCore;
-import com.gmail.val59000mc.languages.Lang;
 
 public class ScenarioManager {
 
@@ -38,103 +34,154 @@ public class ScenarioManager {
                 isActivated(Scenario.DOUBLEGOLD) && scenario.equals(Scenario.VEINMINER)){
             Bukkit.broadcastMessage(ChatColor.RED + "Vein miner does not work in combination with double gold!");
             return;
+        }*/
+
+        Class<? extends ScenarioListener> listenerClass = scenario.getListener();
+
+        try {
+            ScenarioListener scenarioListener = null;
+            if (listenerClass != null) {
+                scenarioListener = listenerClass.newInstance();
+                scenarioListener.onEnable();
+                Bukkit.getServer().getPluginManager().registerEvents(scenarioListener, UhcCore.getPlugin());
+            }
+
+            activeScenarios.put(scenario, scenarioListener);
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
-		 */
-		final Class<? extends ScenarioListener> listenerClass = scenario.getListener();
+    }
 
-		try {
-			ScenarioListener scenarioListener = null;
-			if (listenerClass != null) {
-				scenarioListener = listenerClass.newInstance();
-				scenarioListener.onEnable();
-				Bukkit.getServer().getPluginManager().registerEvents(scenarioListener, UhcCore.getPlugin());
-			}
+    public void removeScenario(Scenario scenario){
+        ScenarioListener scenarioListener = activeScenarios.get(scenario);
+        if (scenarioListener != null) {
+            HandlerList.unregisterAll(scenarioListener);
+            scenarioListener.onDisable();
+        }
+        activeScenarios.remove(scenario);
+    }
 
-			activeScenarios.put(scenario, scenarioListener);
-		}catch (final Exception ex){
-			ex.printStackTrace();
-		}
-	}
+    public boolean toggleScenario(Scenario scenario){
+        if (isActivated(scenario)){
+            removeScenario(scenario);
+            return false;
+        }
 
-	public void removeScenario(Scenario scenario){
-		final ScenarioListener scenarioListener = activeScenarios.get(scenario);
-		if (scenarioListener != null) {
-			HandlerList.unregisterAll(scenarioListener);
-			scenarioListener.onDisable();
-		}
-		activeScenarios.remove(scenario);
-	}
+        addScenario(scenario);
+        return true;
+    }
 
-	public boolean toggleScenario(Scenario scenario){
-		if (isActivated(scenario)){
-			removeScenario(scenario);
-			return false;
-		}
+    public synchronized Set<Scenario> getActiveScenarios(){
+        return activeScenarios.keySet();
+    }
 
-		addScenario(scenario);
-		return true;
-	}
+    public boolean isActivated(Scenario scenario){
+        return activeScenarios.containsKey(scenario);
+    }
 
-	public synchronized Set<Scenario> getActiveScenarios(){
-		return activeScenarios.keySet();
-	}
+    public Inventory getScenarioMainInventory(boolean editItem){
 
-	public boolean isActivated(Scenario scenario){
-		return activeScenarios.containsKey(scenario);
-	}
+        Inventory inv = Bukkit.createInventory(null,27, Lang.SCENARIO_GLOBAL_INVENTORY);
 
-	public Inventory getScenarioMainInventory(boolean editItem){
+        for (Scenario scenario : getActiveScenarios()){
+            inv.addItem(scenario.getScenarioItem());
+        }
 
-		final Inventory inv = Bukkit.createInventory(null,27, Lang.SCENARIO_GLOBAL_INVENTORY);
+        if (editItem){
+            // add edit item
+            ItemStack edit = new ItemStack(Material.BARRIER);
+            ItemMeta itemMeta = edit.getItemMeta();
+            itemMeta.setDisplayName(Lang.SCENARIO_GLOBAL_ITEM_EDIT);
+            edit.setItemMeta(itemMeta);
 
-		for (final Scenario scenario : getActiveScenarios())
-			inv.addItem(scenario.getScenarioItem());
+            inv.setItem(26,edit);
+        }
+        return inv;
+    }
 
-		if (editItem){
-			// add edit item
-			final ItemStack edit = new ItemStack(Material.BARRIER);
-			final ItemMeta itemMeta = edit.getItemMeta();
-			itemMeta.setDisplayName(Lang.SCENARIO_GLOBAL_ITEM_EDIT);
-			edit.setItemMeta(itemMeta);
+    public Inventory getScenarioEditInventory(){
 
-			inv.setItem(26,edit);
-		}
-		return inv;
-	}
+        Inventory inv = Bukkit.createInventory(null,36, Lang.SCENARIO_GLOBAL_INVENTORY_EDIT);
 
-	public Inventory getScenarioEditInventory(){
+        // add edit item
+        ItemStack back = new ItemStack(Material.ARROW);
+        ItemMeta itemMeta = back.getItemMeta();
+        itemMeta.setDisplayName(Lang.SCENARIO_GLOBAL_ITEM_BACK);
+        back.setItemMeta(itemMeta);
+        inv.setItem(27,back);
 
-		final Inventory inv = Bukkit.createInventory(null,36, Lang.SCENARIO_GLOBAL_INVENTORY_EDIT);
+        for (Scenario scenario : Scenario.values()){
 
-		// add edit item
-		final ItemStack back = new ItemStack(Material.ARROW);
-		final ItemMeta itemMeta = back.getItemMeta();
-		itemMeta.setDisplayName(Lang.SCENARIO_GLOBAL_ITEM_BACK);
-		back.setItemMeta(itemMeta);
-		inv.setItem(27,back);
+            ItemStack scenarioItem = scenario.getScenarioItem();
+            if (isActivated(scenario)){
+                scenarioItem.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+                scenarioItem.setAmount(2);
+            }
+            inv.addItem(scenarioItem);
+        }
 
-		for (final Scenario scenario : Scenario.values()){
+        return inv;
+    }
 
-			final ItemStack scenarioItem = scenario.getScenarioItem();
-			if (isActivated(scenario)){
-				scenarioItem.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
-				scenarioItem.setAmount(2);
-			}
-			inv.addItem(scenarioItem);
-		}
+    public Inventory getScenarioVoteInventory(UhcPlayer uhcPlayer){
+        Set<Scenario> playerVotes = uhcPlayer.getScenarioVotes();
+        Inventory inv = Bukkit.createInventory(null,27, Lang.SCENARIO_GLOBAL_INVENTORY_VOTE);
 
-		return inv;
-	}
+        for (Scenario scenario : Scenario.values()){
+            ItemStack item = scenario.getScenarioItem();
 
-	public void loadActiveScenarios(List<String> scenarios){
-		for (final String string : scenarios)
-			try {
-				final Scenario scenario = Scenario.valueOf(string);
-				Bukkit.getLogger().info("[UhcCore] Loading " + scenario.getName());
-				addScenario(scenario);
-			}catch (final Exception ex){
-				Bukkit.getLogger().severe("[UhcCore] Invalid scenario: " + string);
-			}
-	}
+            if (playerVotes.contains(scenario)) {
+                item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+                item.setAmount(2);
+            }
+            inv.addItem(item);
+        }
+        return inv;
+    }
+
+    public void loadActiveScenarios(List<String> scenarios){
+        for (String string : scenarios){
+            try {
+                Scenario scenario = Scenario.valueOf(string);
+                Bukkit.getLogger().info("[UhcCore] Loading " + scenario.getName());
+                addScenario(scenario);
+            }catch (Exception ex){
+                Bukkit.getLogger().severe("[UhcCore] Invalid scenario: " + string);
+            }
+        }
+    }
+
+    public void countVotes(){
+        Map<Scenario, Integer> votes = new HashMap<>();
+
+        for (Scenario scenario : Scenario.values()){
+            votes.put(scenario, 0);
+        }
+
+        for (UhcPlayer uhcPlayer : GameManager.getGameManager().getPlayersManager().getPlayersList()){
+            for (Scenario scenario : uhcPlayer.getScenarioVotes()){
+                int totalVotes = votes.get(scenario) + 1;
+                votes.put(scenario, totalVotes);
+            }
+        }
+
+        int scenarioCount = GameManager.getGameManager().getConfiguration().getElectedScenaroCount();
+        while (scenarioCount > 0){
+            // get scenario with most votes
+            Scenario scenario = null;
+            int scenarioVotes = 0;
+
+            for (Scenario s : votes.keySet()){
+                if (scenario == null || votes.get(s) > scenarioVotes){
+                    scenario = s;
+                    scenarioVotes = votes.get(s);
+                }
+            }
+
+            addScenario(scenario);
+            votes.remove(scenario);
+            scenarioCount--;
+        }
+    }
 
 }
