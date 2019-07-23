@@ -32,9 +32,6 @@ public class VeinMinerListener extends ScenarioListener{
 	public void onBlockBreak(BlockBreakEvent e){
 		final Player player = e.getPlayer();
 
-		if (!player.isSneaking())
-			return;
-
 		final Block block = e.getBlock();
 		final ItemStack tool = player.getItemInHand();
 

@@ -247,7 +247,7 @@ public class Lang {
 		ITEMS_BUNGEE = getString(lang, "items.bungee", "&6Right click to go back to the Hub");
 		ITEMS_BARRIER = getString(lang, "items.barrier", "Leave your team");
 		ITEMS_REGEN_HEAD = getString(lang, "items.regen-head", "Right click to regen your team for 5 seconds");
-		ITEMS_REGEN_HEAD2 = getString(lang, "items.regen-head", "Or Combine the head with gold to get a golden head");
+		ITEMS_REGEN_HEAD2 = getString(lang, "items.regen-head2", "Or Combine the head with gold to get a golden head");
 		ITEMS_REGEN_HEAD_ACTION = getString(lang, "items.regen-head-action", "You get a 5 seconds regen effect for eating a player head");
 		ITEMS_GOLDEN_HEAD_SKULL_NAME = getString(lang, "items.golden-head.skull-name", "&6%player%'s head");
 		ITEMS_GOLDEN_HEAD_SKULL_HELP = getString(lang, "items.golden-head.skull-help", "&eCombine the head with gold to get a golden head.");
