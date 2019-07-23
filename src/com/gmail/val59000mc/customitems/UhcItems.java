@@ -42,14 +42,22 @@ public class UhcItems {
 	}
 
 	public static void giveBungeeItemTo(Player player){
-		final GameManager gm = GameManager.getGameManager();
+		GameManager gm = GameManager.getGameManager();
 		if (gm.getConfiguration().getEnableBungeeSupport() && gm.getConfiguration().getEnableBungeeLobbyItem()){
-			final ItemStack barrier = new ItemStack(Material.BARRIER, 1);
-			final ItemMeta barrierItemMeta = barrier.getItemMeta();
+			ItemStack barrier = new ItemStack(Material.BARRIER);
+			ItemMeta barrierItemMeta = barrier.getItemMeta();
 			barrierItemMeta.setDisplayName(Lang.ITEMS_BUNGEE);
 			barrier.setItemMeta(barrierItemMeta);
 			player.getInventory().setItem(8, barrier);
 		}
+	}
+
+	public static void giveScenariosItemTo(Player player){
+		ItemStack paper = new ItemStack(Material.PAPER);
+		ItemMeta meta = paper.getItemMeta();
+		meta.setDisplayName(Lang.SCENARIO_GLOBAL_ITEM_HOTBAR);
+		paper.setItemMeta(meta);
+		player.getInventory().addItem(paper);
 	}
 
 	public static boolean isLobbyItem(ItemStack item){
@@ -70,6 +78,26 @@ public class UhcItems {
 				);
 	}
 
+	public static boolean isScenariosHotbarItem(ItemStack item){
+		return (
+				item != null &&
+						item.getType().equals(Material.PAPER) &&
+						item.hasItemMeta() &&
+						item.getItemMeta().hasDisplayName() &&
+						item.getItemMeta().getDisplayName().equals(Lang.SCENARIO_GLOBAL_ITEM_HOTBAR)
+		);
+	}
+
+	public static boolean isLobbyBarrierItem(ItemStack item){
+		return (
+				item != null &&
+						item.getType().equals(Material.BARRIER) &&
+						item.hasItemMeta() &&
+						item.getItemMeta().hasDisplayName() &&
+						item.getItemMeta().getDisplayName().equals(Lang.ITEMS_BUNGEE)
+		);
+	}
+	
 	public static void openTeamInventory(Player player){
 		final int maxSlots = 6*9;
 		final Inventory inv = Bukkit.createInventory(null, maxSlots, ChatColor.GREEN+Lang.DISPLAY_MESSAGE_PREFIX+" "+ChatColor.DARK_GREEN+Lang.TEAM_INVENTORY);
